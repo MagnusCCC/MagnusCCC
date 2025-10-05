@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Detail - NASA Space Biology Knowledge Engine</title>
+    <link rel="stylesheet" href="library.css">
+    <link rel="stylesheet" href="document-detail.css">
+    <!-- PDF.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+</head>
+<body data-theme="night">
+    <!-- Navigation Bar -->
+    <nav class="navbar-not-hero">
+        <div class="nav-container">
+            <ul class="nav-links-left">
+                <li><a href="about.html">About Us</a></li>
+            </ul>
+            
+            <div class="nav-logo">
+                <span class="logo-text" onclick="window.location.href='index.html'">T-Boys</span>
+            </div>
+            
+            <ul class="nav-links-right">
+                <li><a href="library.html">Library</a></li>
+                <li><a href="ai.html">AI Chat</a></li>
+                <li>
+                    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                        <span class="sun-icon">☀️</span>
+                        <span class="moon-icon">🌙</span>
+                    </button>
+                </li>
+            </ul>
+            
+            <button class="mobile-toggle" id="navToggle" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <main class="detail-main">
+
+        <!-- Document Header -->
+        <div class="detail-header">
+            <div class="container">
+                <div class="header-content">
+                    <div class="header-meta">
+                        <span class="doc-number" id="docNumber">Loading...</span>
+                        <div class="header-tags" id="headerTags"></div>
+                    </div>
+                    <h1 class="detail-title" id="docTitle">Loading document...</h1>
+                    <div class="detail-authors" id="docAuthors"></div>
+                    
+                    <div class="header-actions">
+                        <a href="library.html" class="btn-secondary" style="text-decoration: none;">
+                            <span>←</span> Back to Library
+                        </a>
+                        <button class="btn-secondary" id="toggleViewBtn">
+                            <span>👁️</span> <span id="viewModeText">Switch to Metadata</span>
+                        </button>
+                        <button class="btn-download" id="downloadBtn">
+                            <span>📥</span> Download PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="detail-content">
+            <div class="container-wide">
+                <div class="content-grid">
+                    <!-- PDF Viewer -->
+                    <div class="pdf-viewer-section" id="pdfViewerSection">
+                        <div class="viewer-controls">
+                            <button class="control-btn" id="prevPage" title="Previous Page">
+                                <span>←</span>
+                            </button>
+                            <span class="page-info">
+                                Page <span id="pageNum">1</span> of <span id="pageCount">--</span>
+                            </span>
+                            <button class="control-btn" id="nextPage" title="Next Page">
+                                <span>→</span>
+                            </button>
+                            
+                            <div class="zoom-controls">
+                                <button class="control-btn" id="zoomOut" title="Zoom Out">−</button>
+                                <span class="zoom-level" id="zoomLevel">100%</span>
+                                <button class="control-btn" id="zoomIn" title="Zoom In">+</button>
+                            </div>
+                        </div>
+                        
+                        <div class="pdf-canvas-container">
+                            <canvas id="pdfCanvas"></canvas>
+                            <div class="pdf-loading" id="pdfLoading">
+                                <div class="spinner"></div>
+                                <p>Loading PDF...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Metadata Section -->
+                    <div class="metadata-section" id="metadataSection">
+                        <div class="metadata-card">
+                            <h2>Abstract</h2>
+                            <p id="docAbstract">Loading...</p>
+                        </div>
+
+                        <div class="metadata-card">
+                            <h2>Document Information</h2>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <span class="info-label">Authors:</span>
+                                    <span class="info-value" id="docAuthorsInfo">--</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Journal:</span>
+                                    <span class="info-value" id="docJournal">--</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Year:</span>
+                                    <span class="info-value" id="docYear">--</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">Pages:</span>
+                                    <span class="info-value" id="docPages">--</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">File:</span>
+                                    <span class="info-value" id="docFilename">--</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="metadata-card">
+                            <h2>Keywords</h2>
+                            <div class="keywords-list" id="docKeywords"></div>
+                        </div>
+
+                        <div class="metadata-card">
+                            <h2>Related Documents</h2>
+                            <div class="related-docs" id="relatedDocs"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 NASA T-Boys Knowledge Engine | Built for NASA Hackathon 2025</p>
+        </div>
+    </footer>
+
+    <script>
+        // Theme toggle
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeToggle = document.getElementById('themeToggle');
+            const body = document.body;
+            const savedTheme = localStorage.getItem('theme') || 'night';
+            
+            body.setAttribute('data-theme', savedTheme);
+
+            if (themeToggle) {
+                themeToggle.addEventListener('click', () => {
+                    const currentTheme = body.getAttribute('data-theme');
+                    const newTheme = currentTheme === 'night' ? 'day' : 'night';
+                    body.setAttribute('data-theme', newTheme);
+                    localStorage.setItem('theme', newTheme);
+                });
+            }
+
+            // Mobile nav toggle
+            const navToggle = document.getElementById('navToggle');
+            const navLinksLeft = document.querySelector('.nav-links-left');
+            const navLinksRight = document.querySelector('.nav-links-right');
+
+            if (navToggle) {
+                navToggle.addEventListener('click', () => {
+                    navLinksLeft.classList.toggle('active');
+                    navLinksRight.classList.toggle('active');
+                });
+            }
+        });
+    </script>
+    <script src="library.js"></script>
+    <script src="document-detail.js"></script>
+</body>
+</html>

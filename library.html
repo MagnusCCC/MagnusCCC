@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library - NASA Space Biology Knowledge Engine</title>
+    <link rel="stylesheet" href="library.css">
+</head>
+<body data-theme="night">
+    <!-- Navigation Bar -->
+    <nav class="navbar-not-hero">
+        <div class="nav-container">
+            <!-- Left: About Us -->
+            <ul class="nav-links-left">
+                <li><a href="about.html">About Us</a></li>
+            </ul>
+            
+            <!-- Center: Logo -->
+            <div class="nav-logo">
+                <span class="logo-text" onclick="window.location.href='index.html'">T-Boys</span>
+            </div>
+            
+            <!-- Right: Library, AI Chat, Theme Toggle -->
+            <ul class="nav-links-right">
+                <li><a href="library.html">Library</a></li>
+                <li><a href="ai.html">AI Chat</a></li>
+                <li>
+                    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                        <span class="sun-icon">☀️</span>
+                        <span class="moon-icon">🌙</span>
+                    </button>
+                </li>
+            </ul>
+            
+            <!-- Mobile toggle -->
+            <button class="mobile-toggle" id="navToggle" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <main class="library-main">
+        <div class="library-hero">
+            <div class="container">
+                <h1 class="page-title">Research Library</h1>
+                <p class="page-subtitle">Browse through 40 scholarly articles on space biology</p>
+            </div>
+        </div>
+    
+
+        <div class="library-content">
+            <button class="filter-toggle-mobile" id="filterToggle">
+                <span>Filters</span>
+                <span class="filter-icon">⚙️</span>
+            </button>
+
+            <aside class="filters-sidebar" id="filtersSidebar">
+                <div class="filters-header">
+                    <h3>Filters</h3>
+                    <button class="filters-clear" id="clearFilters">Clear All</button>
+                </div>
+
+                <div class="filter-group">
+                    <h4 class="filter-title">Topics</h4>
+                    <div class="filter-options">
+                        <label class="filter-option">
+                            <input type="checkbox" name="topic" value="microgravity">
+                            <span>Microgravity</span>
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox" name="topic" value="radiation">
+                            <span>Cosmic Radiation</span>
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox" name="topic" value="dna">
+                            <span>DNA & Genetics</span>
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox" name="topic" value="muscle">
+                            <span>Muscle Loss</span>
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox" name="topic" value="bone">
+                            <span>Bone Density</span>
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox" name="topic" value="plants">
+                            <span>Plant Biology</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <h4 class="filter-title">Year</h4>
+                    <div class="filter-options">
+                        <label class="filter-option">
+                            <input type="checkbox" name="year" value="2024">
+                            <span>2024</span>
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox" name="year" value="2023">
+                            <span>2023</span>
+                        </label>
+                        <label class="filter-option">
+                            <input type="checkbox" name="year" value="2022">
+                            <span>2022</span>
+                        </label>
+                    </div>
+                </div>
+            </aside>
+
+            <div class="library-results">
+                <div class="results-toolbar">
+                    <div class="results-count" id="resultsCount">Showing 40 documents</div>
+                    <div class="sort-controls">
+                        <label for="sortSelect">Sort by:</label>
+                        <select id="sortSelect" class="sort-select">
+                            <option value="newest">Newest First</option>
+                            <option value="oldest">Oldest First</option>
+                            <option value="title">Title A-Z</option>
+                            <option value="relevance">Most Relevant</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="documents-grid" id="documentsGrid">
+                </div>
+
+                <div class="empty-state" id="emptyState" style="display: none;">
+                    <div class="empty-icon">📄</div>
+                    <h3>No documents match your filters</h3>
+                    <p>Try clearing some filters or adjusting your search criteria</p>
+                    <button class="empty-btn" onclick="document.getElementById('clearFilters').click()">Clear Filters</button>
+                </div>
+            </div>
+        </div>
+    </main> 
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 NASA T-Boys Knowledge Engine | Built for NASA Hackathon 2025</p>
+        </div>
+    </footer>
+
+    <script src="library.js"></script>
+    <script>
+        // Theme toggle functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeToggle = document.getElementById('themeToggle');
+            const body = document.body;
+            const savedTheme = localStorage.getItem('theme') || 'night';
+            
+            body.setAttribute('data-theme', savedTheme);
+
+            if (themeToggle) {
+                themeToggle.addEventListener('click', () => {
+                    const currentTheme = body.getAttribute('data-theme');
+                    const newTheme = currentTheme === 'night' ? 'light' : 'night';
+                    body.setAttribute('data-theme', newTheme);
+                    localStorage.setItem('theme', newTheme);
+                });
+            }
+
+            // Mobile nav toggle
+            const navToggle = document.getElementById('navToggle');
+            const navLinksLeft = document.querySelector('.nav-links-left');
+            const navLinksRight = document.querySelector('.nav-links-right');
+
+            if (navToggle) {
+                navToggle.addEventListener('click', () => {
+                    navLinksLeft.classList.toggle('active');
+                    navLinksRight.classList.toggle('active');
+                });
+            }
+        });
+    </script>
+</body>
+</html>

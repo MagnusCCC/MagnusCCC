@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tboy AI</title>
+    <link rel="stylesheet" href="style.css"/>
+    <link rel="stylesheet" href="ai.css"/>
+</head>
+<body data-theme="dark">
+    <!-- Navigation Bar -->
+    <nav class="navbar-not-hero">
+        <div class="nav-container">
+            <!-- Left: About Us -->
+            <ul class="nav-links-left">
+                <li><a href="about.html">About Us</a></li>
+            </ul>
+            
+            <!-- Center: Logo -->
+            <div class="nav-logo">
+                <span class="logo-text" onclick="window.location.href='index.html'" style="cursor: pointer;">T-Boys</span>
+            </div>
+            
+            <!-- Right: Library, AI Chat, Theme Toggle -->
+            <ul class="nav-links-right">
+                <li><a href="library.html">Library</a></li>
+                <li><a href="ai.html">AI Chat</a></li>
+                <li>
+                    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                        <span class="sun-icon">☀️</span>
+                        <span class="moon-icon">🌙</span>
+                    </button>
+                </li>
+            </ul>
+            
+            <!-- Mobile toggle -->
+            <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- AI Chat Interface -->
+    <section class="chat-interface">
+        <div class="chat-container">
+            <!-- Chat History Sidebar -->
+            <aside class="chat-history" id="chatHistory">
+                <div class="chat-history-header">
+                    <h3>Conversations</h3>
+                    <button class="new-chat-btn" id="newChatBtn">
+                        <span class="btn-icon">+</span> New Chat
+                    </button>
+                </div>
+                <div class="chat-history-list" id="chatHistoryList">
+                    <div class="history-item active">
+                        <div class="history-title">Microgravity Effects on DNA</div>
+                        <div class="history-date">Today, 2:30 PM</div>
+                    </div>
+                    <div class="history-item">
+                        <div class="history-title">Plant Growth in Space</div>
+                        <div class="history-date">Today, 1:15 PM</div>
+                    </div>
+                    <div class="history-item">
+                        <div class="history-title">Astronaut Bone Density</div>
+                        <div class="history-date">Yesterday</div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Chat Area -->
+            <div class="chat-main">
+                <div class="chat-header">
+                    <button class="chat-history-toggle" id="chatHistoryToggle">
+                        <span>☰</span>
+                    </button>
+                    <div class="chat-title-area">
+                        <h2>Tboy AI</h2>
+                        <p class="chat-subtitle">
+                            <span class="status-indicator">●</span> Online - Ask me about NASA's space biology research
+                        </p>
+                    </div>
+                </div>
+
+                <div class="chat-messages" id="chatMessages">
+                    <!-- Welcome Message -->
+                    <div class="message ai-message">
+                        <div class="message-avatar">🤖</div>
+                        <div class="message-content">
+                            <div class="message-text">
+                                <p>Hello! I'm your Space Biology AI Assistant, powered by Mistral AI and connected to NASA's research database.</p>
+                                <p>I can help you explore topics like:</p>
+                                <ul>
+                                    <li>Microgravity effects on living organisms</li>
+                                    <li>Plant growth and cultivation in space</li>
+                                    <li>Astronaut health, physiology, and adaptation</li>
+                                    <li>Radiation protection and countermeasures</li>
+                                    <li>Space microbiology and biosecurity</li>
+                                </ul>
+                                <p>What would you like to explore today?</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-input-area">
+                    <div class="chat-input-container">
+                        <input
+                            type="text"
+                            id="chatInput"
+                            class="chat-input"
+                            placeholder="Ask about space biology research..."
+                            autocomplete="off"
+                        />
+                        <button class="send-btn" id="sendBtn" aria-label="Send message">
+                            <span class="send-icon">➤</span>
+                        </button>
+                    </div>
+                    <div class="chat-footer-info">
+                        <small>Powered by Mistral AI • Data from NASA Open Portal • Automated via n8n</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeToggle = document.getElementById('themeToggle');
+            const body = document.body;
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            
+            body.setAttribute('data-theme', savedTheme);
+
+            if (themeToggle) {
+                themeToggle.addEventListener('click', () => {
+                    const currentTheme = body.getAttribute('data-theme');
+                    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                    body.setAttribute('data-theme', newTheme);
+                    localStorage.setItem('theme', newTheme);
+                });
+            }
+
+            // Mobile menu toggle
+            const mobileToggle = document.getElementById('mobileToggle');
+            const navLinksLeft = document.querySelector('.nav-links-left');
+            const navLinksRight = document.querySelector('.nav-links-right');
+
+            if (mobileToggle) {
+                mobileToggle.addEventListener('click', () => {
+                    navLinksLeft.classList.toggle('active');
+                    navLinksRight.classList.toggle('active');
+                });
+            }
+
+            // Chat history toggle for mobile
+            const chatHistoryToggle = document.getElementById('chatHistoryToggle');
+            const chatHistory = document.getElementById('chatHistory');
+
+            if (chatHistoryToggle) {
+                chatHistoryToggle.addEventListener('click', () => {
+                    chatHistory.classList.toggle('mobile-active');
+                });
+            }
+
+            // Send message functionality
+            const sendBtn = document.getElementById('sendBtn');
+            const chatInput = document.getElementById('chatInput');
+            const chatMessages = document.getElementById('chatMessages');
+
+            function addMessage(text, isUser = false) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${isUser ? 'user-message' : 'ai-message'}`;
+                
+                if (isUser) {
+                    messageDiv.innerHTML = `
+                        <div class="message-content">
+                            <div class="message-text">${text}</div>
+                        </div>
+                        <div class="message-avatar">👤</div>
+                    `;
+                } else {
+                    messageDiv.innerHTML = `
+                        <div class="message-avatar">🤖</div>
+                        <div class="message-content">
+                            <div class="message-text">${text}</div>
+                        </div>
+                    `;
+                }
+                
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function showTypingIndicator() {
+                const typingDiv = document.createElement('div');
+                typingDiv.className = 'message ai-message typing-indicator';
+                typingDiv.id = 'typingIndicator';
+                typingDiv.innerHTML = `
+                    <div class="message-avatar">🤖</div>
+                    <div class="message-content">
+                        <div class="typing-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+                `;
+                chatMessages.appendChild(typingDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function removeTypingIndicator() {
+                const typingIndicator = document.getElementById('typingIndicator');
+                if (typingIndicator) {
+                    typingIndicator.remove();
+                }
+            }
+
+            function sendMessage() {
+                const message = chatInput.value.trim();
+                if (message) {
+                    // Add user message
+                    addMessage(message, true);
+                    
+                    // Clear input
+                    chatInput.value = '';
+                    
+                    // Show typing indicator
+                    showTypingIndicator();
+
+                    // Simulate AI response
+                    setTimeout(() => {
+                        removeTypingIndicator();
+                        addMessage(`<p>Thank you for your question about "${message}".</p><p>This is a simulated response. In production, this would connect to your Mistral AI backend via n8n workflow, query the NASA research database, and provide detailed, accurate information about space biology topics.</p><p>Would you like me to search the research library for related articles?</p>`);
+                    }, 1500);
+                }
+            }
+
+            sendBtn.addEventListener('click', sendMessage);
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            // New chat button
+            const newChatBtn = document.getElementById('newChatBtn');
+            if (newChatBtn) {
+                newChatBtn.addEventListener('click', () => {
+                    if (confirm('Start a new conversation? Current chat will be saved to history.')) {
+                        chatMessages.innerHTML = `
+                            <div class="message ai-message">
+                                <div class="message-avatar">🤖</div>
+                                <div class="message-content">
+                                    <div class="message-text">
+                                        <p>Hello! I'm your Space Biology AI Assistant, powered by Mistral AI and connected to NASA's research database.</p>
+                                        <p>I can help you explore topics like:</p>
+                                        <ul>
+                                            <li>Microgravity effects on living organisms</li>
+                                            <li>Plant growth and cultivation in space</li>
+                                            <li>Astronaut health, physiology, and adaptation</li>
+                                            <li>Radiation protection and countermeasures</li>
+                                            <li>Space microbiology and biosecurity</li>
+                                        </ul>
+                                        <p>What would you like to explore today?</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+            }
+
+            // History item click
+            const historyItems = document.querySelectorAll('.history-item');
+            historyItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    historyItems.forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+                    if (chatHistory.classList.contains('mobile-active')) {
+                        chatHistory.classList.remove('mobile-active');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
